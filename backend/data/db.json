@@ -1,0 +1,442 @@
+{
+  "users": [
+    {
+      "id": "a31175cc-1fb9-4ddd-984c-1da98793ed96",
+      "full_name": "David Burbano",
+      "email": "dburbanoh@gmail.com",
+      "password_hash": "$2b$10$VS8xA54ikScaE/AnzF6Rduevfse9Kx5cV560STMkBxbHDIE/1nPLe",
+      "phone": null,
+      "created_at": "2026-10-05T20:12:09.480Z"
+    },
+    {
+      "id": "1d86304c-0d13-4683-838a-b3aac6fafee6",
+      "full_name": "Dario Burbano",
+      "email": "daffburbano@gmail.com",
+      "password_hash": "$2b$10$.TGSueuiRduqd6bLPHKN/upfnKoG4E1mGlRcA79JaqBv3JbVHM3vm",
+      "phone": null,
+      "created_at": "2026-10-05T20:14:50.420Z"
+    }
+  ],
+  "business_types": [
+    {
+      "id": "tienda",
+      "name": "Tienda de Barrio / Minimercado",
+      "description": "Venta de abarrotes"
+    },
+    {
+      "id": "barberia",
+      "name": "Barbería / Peluquería",
+      "description": "Cortes y estética"
+    },
+    {
+      "id": "papeleria",
+      "name": "Papelería / Variedades",
+      "description": "Útiles e impresiones"
+    },
+    {
+      "id": "bar",
+      "name": "Bar / Licorera",
+      "description": "Bebidas y licores"
+    },
+    {
+      "id": "restaurante",
+      "name": "Restaurante",
+      "description": "Comidas preparadas"
+    },
+    {
+      "id": "emprendimiento",
+      "name": "Emprendimiento / Tienda Virtual",
+      "description": "Ventas generales"
+    },
+    {
+      "id": "otro",
+      "name": "Otro Pequeño Comercio",
+      "description": "Comercio local"
+    }
+  ],
+  "businesses": [
+    {
+      "id": "9e9f25c2-db34-4030-a52e-a3e46def43b3",
+      "user_id": "a31175cc-1fb9-4ddd-984c-1da98793ed96",
+      "business_type_id": "emprendimiento",
+      "name": "DaffEntertainment",
+      "city": "Pasto",
+      "currency": "COP",
+      "created_at": "2026-10-05T20:12:09.482Z"
+    },
+    {
+      "id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "user_id": "1d86304c-0d13-4683-838a-b3aac6fafee6",
+      "business_type_id": "bar",
+      "name": "DaffEntertainmen",
+      "city": "El Tambo",
+      "currency": "COP",
+      "created_at": "2026-10-05T20:14:50.420Z"
+    }
+  ],
+  "categories": [],
+  "products": [
+    {
+      "id": "prod-narino-1",
+      "business_id": "9e9f25c2-db34-4030-a52e-a3e46def43b3",
+      "category_id": null,
+      "name": "Aguardiente Nariño",
+      "price": 45000,
+      "cost": 32000,
+      "stock": 25,
+      "min_stock": 5,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-05T20:18:00.000Z"
+    },
+    {
+      "id": "prod-narino-2",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "category_id": null,
+      "name": "Aguardiente Nariño",
+      "price": 45000,
+      "cost": 32000,
+      "stock": 23,
+      "min_stock": 5,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-05T20:18:00.000Z"
+    },
+    {
+      "id": "prod-amarillo-1",
+      "business_id": "9e9f25c2-db34-4030-a52e-a3e46def43b3",
+      "category_id": null,
+      "name": "Aguardiente Amarillo",
+      "price": 55000,
+      "cost": 40000,
+      "stock": 20,
+      "min_stock": 5,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-05T20:18:00.000Z"
+    },
+    {
+      "id": "prod-amarillo-2",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "category_id": null,
+      "name": "Aguardiente Amarillo",
+      "price": 55000,
+      "cost": 40000,
+      "stock": 19,
+      "min_stock": 5,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-05T20:18:00.000Z"
+    },
+    {
+      "id": "prod-buchanas-1",
+      "business_id": "9e9f25c2-db34-4030-a52e-a3e46def43b3",
+      "category_id": null,
+      "name": "Whisky Buchanan's",
+      "price": 140000,
+      "cost": 105000,
+      "stock": 15,
+      "min_stock": 3,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-05T20:18:00.000Z"
+    },
+    {
+      "id": "prod-buchanas-2",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "category_id": null,
+      "name": "Whisky Buchanan's",
+      "price": 140000,
+      "cost": 105000,
+      "stock": 15,
+      "min_stock": 3,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-05T20:18:00.000Z"
+    },
+    {
+      "id": "prod-poker-1",
+      "business_id": "9e9f25c2-db34-4030-a52e-a3e46def43b3",
+      "category_id": null,
+      "name": "Cerveza Poker",
+      "price": 4500,
+      "cost": 3000,
+      "stock": 60,
+      "min_stock": 10,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-05T20:18:00.000Z"
+    },
+    {
+      "id": "prod-poker-2",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "category_id": null,
+      "name": "Cerveza Poker",
+      "price": 4500,
+      "cost": 3000,
+      "stock": 18,
+      "min_stock": 10,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-05T20:18:00.000Z"
+    },
+    {
+      "id": "prod-aguila-1",
+      "business_id": "9e9f25c2-db34-4030-a52e-a3e46def43b3",
+      "category_id": null,
+      "name": "Cerveza Águila Light",
+      "price": 4500,
+      "cost": 3000,
+      "stock": 50,
+      "min_stock": 10,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-05T20:18:00.000Z"
+    },
+    {
+      "id": "prod-aguila-2",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "category_id": null,
+      "name": "Cerveza Águila Light",
+      "price": 4500,
+      "cost": 3000,
+      "stock": 50,
+      "min_stock": 10,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-05T20:18:00.000Z"
+    },
+    {
+      "id": "prod-coronita-1",
+      "business_id": "9e9f25c2-db34-4030-a52e-a3e46def43b3",
+      "category_id": null,
+      "name": "Cerveza Coronita",
+      "price": 6000,
+      "cost": 4200,
+      "stock": 40,
+      "min_stock": 8,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-05T20:18:00.000Z"
+    },
+    {
+      "id": "prod-coronita-2",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "category_id": null,
+      "name": "Cerveza Coronita",
+      "price": 6000,
+      "cost": 4200,
+      "stock": 34,
+      "min_stock": 8,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-05T20:18:00.000Z"
+    },
+    {
+      "id": "b6df6c08-5af7-4f11-823d-446fa4cdd1a0",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "category_id": null,
+      "name": "Olmeca",
+      "barcode": null,
+      "price": 80,
+      "cost": 70,
+      "stock": 10,
+      "min_stock": 2,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-05T20:26:24.367Z"
+    }
+  ],
+  "customers": [
+    {
+      "id": "5f6a7272-5556-41e8-b2d2-03425f6d95f9",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "name": "Concha",
+      "phone": "3233445867",
+      "notes": "Fio 3 botellas de amarillo",
+      "created_at": "2026-10-05T20:46:45.097Z"
+    },
+    {
+      "id": "2c661753-089f-4b37-931e-9550bfd80de6",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "name": "Dario",
+      "phone": "3233445867",
+      "notes": "llevo 2 six pac corono",
+      "created_at": "2026-10-05T21:47:40.158Z"
+    }
+  ],
+  "sales": [
+    {
+      "id": "a4c677e6-301b-4034-b2ff-7265e0a1e6ea",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "customer_id": null,
+      "total_amount": 90000,
+      "payment_method": "transfer",
+      "status": "completed",
+      "notes": null,
+      "created_at": "2026-10-05T20:31:17.220Z"
+    },
+    {
+      "id": "736e655c-2bf0-45af-8fb3-cd8c66a92f9e",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "customer_id": null,
+      "total_amount": 55000,
+      "payment_method": "cash",
+      "status": "completed",
+      "notes": null,
+      "created_at": "2026-10-05T20:33:42.212Z"
+    },
+    {
+      "id": "747fde9a-b051-4e50-b02a-3a9eecd39c46",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "customer_id": null,
+      "total_amount": 33480,
+      "payment_method": "cash",
+      "status": "completed",
+      "notes": null,
+      "created_at": "2026-10-05T20:37:37.405Z"
+    },
+    {
+      "id": "fda7d958-c8a0-49d3-8130-88258e251e64",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "customer_id": null,
+      "total_amount": 95040,
+      "payment_method": "cash",
+      "status": "completed",
+      "notes": null,
+      "created_at": "2026-10-05T20:38:05.575Z"
+    },
+    {
+      "id": "847ee30d-22d8-42a0-b0f6-195faa2e51d0",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "customer_id": null,
+      "total_amount": 75330,
+      "payment_method": "transfer",
+      "status": "completed",
+      "notes": null,
+      "created_at": "2026-10-05T21:52:00.015Z"
+    }
+  ],
+  "sale_items": [
+    {
+      "id": "d28c084e-c4a3-4184-9554-b9c51de2344a",
+      "sale_id": "a4c677e6-301b-4034-b2ff-7265e0a1e6ea",
+      "product_id": "prod-narino-2",
+      "quantity": 2,
+      "unit_price": 45000,
+      "subtotal": 90000
+    },
+    {
+      "id": "6b3879fe-bd8d-4693-ae57-29ef6067dcc2",
+      "sale_id": "736e655c-2bf0-45af-8fb3-cd8c66a92f9e",
+      "product_id": "prod-amarillo-2",
+      "quantity": 1,
+      "unit_price": 55000,
+      "subtotal": 55000
+    },
+    {
+      "id": "45ffabd4-2fa4-4b71-a803-1684f4490702",
+      "sale_id": "747fde9a-b051-4e50-b02a-3a9eecd39c46",
+      "product_id": "prod-coronita-2",
+      "quantity": 6,
+      "unit_price": 5580,
+      "subtotal": 33480
+    },
+    {
+      "id": "9d0c1afc-114e-4278-a8f5-53c3bbb68456",
+      "sale_id": "fda7d958-c8a0-49d3-8130-88258e251e64",
+      "product_id": "prod-poker-2",
+      "quantity": 24,
+      "unit_price": 3960,
+      "subtotal": 95040
+    },
+    {
+      "id": "7c12abe7-8cd6-4f16-ba25-c02dd1ec1236",
+      "sale_id": "847ee30d-22d8-42a0-b0f6-195faa2e51d0",
+      "product_id": "prod-poker-2",
+      "quantity": 18,
+      "unit_price": 4185,
+      "subtotal": 75330
+    }
+  ],
+  "expenses": [],
+  "receivables": [
+    {
+      "id": "6a93875d-1546-4f51-8a0e-3b37ca3f870d",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "customer_id": "2c661753-089f-4b37-931e-9550bfd80de6",
+      "total_amount": 40000,
+      "paid_amount": 0,
+      "status": "pending",
+      "due_date": "2026-10-05",
+      "concept": "llevo 2 six pac corono",
+      "notes": "me paga en la semana",
+      "created_at": "2026-10-05T21:47:40.158Z"
+    }
+  ],
+  "inventory_movements": [
+    {
+      "id": "bc0dfb05-1066-4d8b-be6c-35a3b9b1b8ad",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "product_id": "prod-narino-2",
+      "type": -2,
+      "quantity": 25,
+      "previous_stock": 23,
+      "new_stock": "Venta #a4c677e6",
+      "created_at": "2026-10-05T20:31:17.223Z"
+    },
+    {
+      "id": "1ea6a5cb-4e9f-47ab-9ec0-3435739edcd7",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "product_id": "prod-amarillo-2",
+      "type": -1,
+      "quantity": 20,
+      "previous_stock": 19,
+      "new_stock": "Venta #736e655c",
+      "created_at": "2026-10-05T20:33:42.214Z"
+    },
+    {
+      "id": "ae38c792-b52e-44d5-b836-58aaafac54f5",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "product_id": "prod-coronita-2",
+      "type": -6,
+      "quantity": 40,
+      "previous_stock": 34,
+      "new_stock": "Venta #747fde9a",
+      "created_at": "2026-10-05T20:37:37.415Z"
+    },
+    {
+      "id": "f7af2ef0-71b2-4649-8384-d690a081adf6",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "product_id": "prod-poker-2",
+      "type": -24,
+      "quantity": 60,
+      "previous_stock": 36,
+      "new_stock": "Venta #fda7d958",
+      "created_at": "2026-10-05T20:38:05.576Z"
+    },
+    {
+      "id": "6d2fda92-510a-48e0-a89d-bb6b4dfd1f01",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "product_id": "prod-poker-2",
+      "type": -18,
+      "quantity": 36,
+      "previous_stock": 18,
+      "new_stock": "Venta #847ee30d",
+      "created_at": "2026-10-05T21:52:00.017Z"
+    }
+  ]
+}
