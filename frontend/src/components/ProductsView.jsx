@@ -15,7 +15,9 @@ export const ProductsView = () => {
     stock: '10',
     min_stock: '5',
     unit_type: 'unidad',
-    is_service: false
+    is_service: false,
+    duration_minutes: '30',
+    commission_rate: '40'
   });
 
   const loadProducts = async () => {
@@ -42,7 +44,17 @@ export const ProductsView = () => {
         body: JSON.stringify(formData)
       });
       setShowModal(false);
-      setFormData({ name: '', price: '', cost: '', stock: '10', min_stock: '5', unit_type: 'unidad', is_service: false });
+      setFormData({
+        name: '',
+        price: '',
+        cost: '',
+        stock: '10',
+        min_stock: '5',
+        unit_type: 'unidad',
+        is_service: false,
+        duration_minutes: '30',
+        commission_rate: '40'
+      });
       loadProducts();
     } catch (error) {
       alert(`Error: ${error.message}`);
@@ -61,10 +73,14 @@ export const ProductsView = () => {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h2>Catálogo de Productos y Servicios</h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Administra tu inventario y servicios ofertados</p>
+          <h2>📦 Catálogo de Productos & Servicios</h2>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+            Gestiona los productos físicos de inventario y los servicios ofrecidos por tu equipo
+          </p>
         </div>
-        <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Nuevo Elemento</button>
+        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+          + Nuevo Producto / Servicio
+        </button>
       </div>
 
       {/* Barra de Búsqueda y Filtros */}
@@ -79,13 +95,13 @@ export const ProductsView = () => {
         />
         <select className="select-field" style={{ width: 'auto' }} value={filterType} onChange={(e) => setFilterType(e.target.value)}>
           <option value="all">Todos los elementos</option>
-          <option value="product">Solo Productos Físicos</option>
-          <option value="service">Solo Servicios (Barbería/Impresión)</option>
+          <option value="product">📦 Solo Productos Físicos</option>
+          <option value="service">✂️ Solo Servicios (Cortes/Estética/Copias)</option>
           <option value="low_stock">🟡 Solo Stock Bajo</option>
         </select>
       </div>
 
-      {/* Tabla de Productos */}
+      {/* Tabla de Productos y Servicios */}
       <div className="table-container">
         <table className="data-table">
           <thead>
@@ -93,8 +109,8 @@ export const ProductsView = () => {
               <th>Nombre</th>
               <th>Tipo</th>
               <th>Precio Venta</th>
-              <th>Costo</th>
-              <th>Stock Actual</th>
+              <th>Costo / Comisión</th>
+              <th>Stock / Duración</th>
               <th>Estado</th>
             </tr>
           </thead>
@@ -102,7 +118,7 @@ export const ProductsView = () => {
             {loading ? (
               <tr><td colSpan="6" style={{ textAlign: 'center' }}>Cargando catálogo...</td></tr>
             ) : filtered.length === 0 ? (
-              <tr><td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>No se encontraron productos en el catálogo.</td></tr>
+              <tr><td colSpan="6" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>No se encontraron elementos en el catálogo.</td></tr>
             ) : (
               filtered.map((item) => {
                 const isService = item.is_service;
@@ -114,7 +130,7 @@ export const ProductsView = () => {
 
                 if (isService) {
                   badgeClass = 'badge-info';
-                  statusLabel = '🔵 Servicio';
+                  statusLabel = '🔵 Servicio Activo';
                 } else if (stockNum <= 0) {
                   badgeClass = 'badge-danger';
                   statusLabel = '🔴 Sin Stock';
@@ -125,11 +141,21 @@ export const ProductsView = () => {
 
                 return (
                   <tr key={item.id}>
-                    <td style={{ fontWeight: '600' }}>{item.name}</td>
-                    <td>{isService ? 'Servicio' : 'Producto'}</td>
+                    <td style={{ fontWeight: '600' }}>
+                      {isService ? '✂️' : '📦'} {item.name}
+                    </td>
+                    <td>{isService ? 'Servicio' : 'Producto Físico'}</td>
                     <td style={{ fontWeight: '700', color: '#34d399' }}>${Number(item.price).toLocaleString('es-CO')}</td>
-                    <td>${Number(item.cost || 0).toLocaleString('es-CO')}</td>
-                    <td>{isService ? 'N/A' : `${stockNum} ${item.unit_type}`}</td>
+                    <td>
+                      {isService 
+                        ? `${Number(item.commission_rate || 40)}% comisión` 
+                        : `$${Number(item.cost || 0).toLocaleString('es-CO')}`}
+                    </td>
+                    <td>
+                      {isService 
+                        ? `⏱️ ${item.duration_minutes || 30} min` 
+                        : `${stockNum} ${item.unit_type}`}
+                    </td>
                     <td><span className={`badge ${badgeClass}`}>{statusLabel}</span></td>
                   </tr>
                 );
@@ -139,52 +165,128 @@ export const ProductsView = () => {
         </table>
       </div>
 
-      {/* Modal Nuevo Producto / Servicio */}
+      {/* Modal Nuevo Producto / Servicio Adaptativo */}
       {showModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200, padding: '1rem' }}>
           <div className="card" style={{ maxWidth: '480px', width: '100%' }}>
-            <h3>+ Crear Nuevo Producto / Servicio</h3>
+            <h3>+ Crear Nuevo Elemento</h3>
             <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
               <div>
-                <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Tipo de Elemento</label>
-                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.3rem' }}>
-                  <label><input type="radio" checked={!formData.is_service} onChange={() => setFormData({ ...formData, is_service: false })} /> Producto Físico</label>
-                  <label><input type="radio" checked={formData.is_service} onChange={() => setFormData({ ...formData, is_service: true })} /> Servicio (Barbería/Peluquería)</label>
+                <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>¿Qué tipo de elemento deseas agregar?</label>
+                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.4rem' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer' }}>
+                    <input type="radio" checked={!formData.is_service} onChange={() => setFormData({ ...formData, is_service: false })} />
+                    📦 Producto Físico (Inventario)
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer' }}>
+                    <input type="radio" checked={formData.is_service} onChange={() => setFormData({ ...formData, is_service: true })} />
+                    ✂️ Servicio (Corte, Barba, Copias)
+                  </label>
                 </div>
               </div>
 
               <div>
-                <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Nombre</label>
-                <input type="text" className="input-field" placeholder="Ej. Cerveza Poker 330ml o Corte Caballero" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required />
+                <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                  {formData.is_service ? 'Nombre del Servicio' : 'Nombre del Producto'}
+                </label>
+                <input
+                  type="text"
+                  className="input-field"
+                  placeholder={formData.is_service ? 'Ej. Corte Degradado con Navaja' : 'Ej. Cera Capilar Mate 100g o Arroz 1kg'}
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Precio de Venta ($)</label>
-                  <input type="number" className="input-field" placeholder="5000" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} required />
+                  <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Precio al Público ($)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    className="input-field"
+                    placeholder="20000"
+                    value={formData.price}
+                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                    required
+                  />
                 </div>
-                <div>
-                  <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Costo ($)</label>
-                  <input type="number" className="input-field" placeholder="3200" value={formData.cost} onChange={(e) => setFormData({ ...formData, cost: e.target.value })} />
-                </div>
+
+                {formData.is_service ? (
+                  <div>
+                    <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Duración Estimada (Minutos)</label>
+                    <input
+                      type="number"
+                      min="5"
+                      className="input-field"
+                      placeholder="35"
+                      value={formData.duration_minutes}
+                      onChange={(e) => setFormData({ ...formData, duration_minutes: e.target.value })}
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Costo de Compra ($)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      className="input-field"
+                      placeholder="12000"
+                      value={formData.cost}
+                      onChange={(e) => setFormData({ ...formData, cost: e.target.value })}
+                    />
+                  </div>
+                )}
               </div>
 
+              {/* Campos específicos para Productos Físicos */}
               {!formData.is_service && (
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div>
                     <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Stock Inicial</label>
-                    <input type="number" className="input-field" value={formData.stock} onChange={(e) => setFormData({ ...formData, stock: e.target.value })} />
+                    <input
+                      type="number"
+                      min="0"
+                      className="input-field"
+                      value={formData.stock}
+                      onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+                    />
                   </div>
                   <div>
-                    <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Stock Mínimo Alerta</label>
-                    <input type="number" className="input-field" value={formData.min_stock} onChange={(e) => setFormData({ ...formData, min_stock: e.target.value })} />
+                    <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Stock Mínimo para Alerta</label>
+                    <input
+                      type="number"
+                      min="1"
+                      className="input-field"
+                      value={formData.min_stock}
+                      onChange={(e) => setFormData({ ...formData, min_stock: e.target.value })}
+                    />
                   </div>
+                </div>
+              )}
+
+              {/* Campos específicos para Servicios */}
+              {formData.is_service && (
+                <div>
+                  <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>% Comisión por Defecto para el Barbero/Especialista</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    className="input-field"
+                    placeholder="40"
+                    value={formData.commission_rate}
+                    onChange={(e) => setFormData({ ...formData, commission_rate: e.target.value })}
+                  />
                 </div>
               )}
 
               <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', marginTop: '1rem' }}>
                 <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
-                <button type="submit" className="btn btn-primary">Guardar Elemento</button>
+                <button type="submit" className="btn btn-primary">
+                  {formData.is_service ? 'Guardar Servicio' : 'Guardar Producto'}
+                </button>
               </div>
             </form>
           </div>

@@ -4,6 +4,53 @@ import { AuthContext } from '../context/AuthContext';
 export const Navbar = ({ activeTab, setActiveTab }) => {
   const { user, business, logout } = useContext(AuthContext);
 
+  const enabledModules = business?.enabled_modules || ['pos', 'inventory', 'expenses', 'reports'];
+  const isBarber = business?.business_type_id === 'barberia';
+
+  // Lista dinámica de navegación según los módulos encendidos por el negocio
+  const dynamicNavItems = [
+    {
+      id: 'dashboard',
+      label: '📊 Inicio',
+      visible: true
+    },
+    {
+      id: 'copilot',
+      label: '🤖 Copiloto IA',
+      visible: true
+    },
+    {
+      id: 'appointments',
+      label: '📅 Agenda & Citas',
+      visible: enabledModules.includes('appointments')
+    },
+    {
+      id: 'sales',
+      label: isBarber ? '💈 Cobro & Caja' : '🛒 Ventas POS',
+      visible: enabledModules.includes('pos')
+    },
+    {
+      id: 'products',
+      label: isBarber ? '✂️ Servicios & Catálogo' : '📦 Catálogo & Stock',
+      visible: enabledModules.includes('inventory') || enabledModules.includes('services')
+    },
+    {
+      id: 'staff',
+      label: isBarber ? '💈 Barberos & Comisiones' : '👥 Personal',
+      visible: enabledModules.includes('staff')
+    },
+    {
+      id: 'receivables',
+      label: '📑 Fiados',
+      visible: enabledModules.includes('receivables')
+    },
+    {
+      id: 'settings',
+      label: '⚙️ Configuración',
+      visible: true
+    }
+  ].filter(item => item.visible);
+
   return (
     <>
       <header className="navbar">
@@ -15,55 +62,34 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
 
           {user && (
             <ul className="nav-links">
-              <li>
-                <button
-                  className={`nav-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('dashboard')}
-                >
-                  📊 Inicio
-                </button>
-              </li>
-              <li>
-                <button
-                  className={`nav-btn ${activeTab === 'copilot' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('copilot')}
-                >
-                  🤖 Copiloto IA
-                </button>
-              </li>
-              <li>
-                <button
-                  className={`nav-btn ${activeTab === 'sales' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('sales')}
-                >
-                  🛒 Ventas
-                </button>
-              </li>
-              <li>
-                <button
-                  className={`nav-btn ${activeTab === 'products' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('products')}
-                >
-                  📦 Catálogo
-                </button>
-              </li>
-              <li>
-                <button
-                  className={`nav-btn ${activeTab === 'receivables' ? 'active' : ''}`}
-                  onClick={() => setActiveTab('receivables')}
-                >
-                  📑 Fiados
-                </button>
-              </li>
+              {dynamicNavItems.map(item => (
+                <li key={item.id}>
+                  <button
+                    className={`nav-btn ${activeTab === item.id ? 'active' : ''}`}
+                    onClick={() => setActiveTab(item.id)}
+                  >
+                    {item.label}
+                  </button>
+                </li>
+              ))}
             </ul>
           )}
 
           {user && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                🏬 {business ? business.name : user.full_name}
-              </span>
-              <button className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.82rem' }} onClick={logout}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '0.88rem', fontWeight: '600', color: '#f8fafc' }}>
+                  {business ? business.name : user.full_name}
+                </div>
+                <div style={{ fontSize: '0.72rem', color: 'var(--color-primary-light)', textTransform: 'capitalize' }}>
+                  {business?.business_type_id || 'Comercio'}
+                </div>
+              </div>
+              <button
+                className="btn btn-secondary"
+                style={{ padding: '0.4rem 0.8rem', fontSize: '0.82rem' }}
+                onClick={logout}
+              >
                 Salir
               </button>
             </div>
@@ -71,44 +97,19 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
         </div>
       </header>
 
-      {/* Navegación Inferior en Móviles */}
+      {/* Navegación Inferior en Móviles Dinámica */}
       {user && (
         <nav className="mobile-nav">
-          <button
-            className={`mobile-nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}
-            onClick={() => setActiveTab('dashboard')}
-          >
-            <span className="icon">📊</span>
-            <span>Inicio</span>
-          </button>
-          <button
-            className={`mobile-nav-item ${activeTab === 'copilot' ? 'active' : ''}`}
-            onClick={() => setActiveTab('copilot')}
-          >
-            <span className="icon">🤖</span>
-            <span>Copiloto</span>
-          </button>
-          <button
-            className={`mobile-nav-item ${activeTab === 'sales' ? 'active' : ''}`}
-            onClick={() => setActiveTab('sales')}
-          >
-            <span className="icon">🛒</span>
-            <span>Ventas</span>
-          </button>
-          <button
-            className={`mobile-nav-item ${activeTab === 'products' ? 'active' : ''}`}
-            onClick={() => setActiveTab('products')}
-          >
-            <span className="icon">📦</span>
-            <span>Stock</span>
-          </button>
-          <button
-            className={`mobile-nav-item ${activeTab === 'receivables' ? 'active' : ''}`}
-            onClick={() => setActiveTab('receivables')}
-          >
-            <span className="icon">📑</span>
-            <span>Fiados</span>
-          </button>
+          {dynamicNavItems.slice(0, 5).map(item => (
+            <button
+              key={item.id}
+              className={`mobile-nav-item ${activeTab === item.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(item.id)}
+            >
+              <span className="icon">{item.label.split(' ')[0]}</span>
+              <span>{item.label.split(' ')[1] || item.label}</span>
+            </button>
+          ))}
         </nav>
       )}
     </>

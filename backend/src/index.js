@@ -11,6 +11,9 @@ const expensesRoutes = require('./routes/expensesRoutes');
 const customersRoutes = require('./routes/customersRoutes');
 const receivablesRoutes = require('./routes/receivablesRoutes');
 const aiRoutes = require('./routes/aiRoutes');
+const businessRoutes = require('./routes/businessRoutes');
+const staffRoutes = require('./routes/staffRoutes');
+const appointmentRoutes = require('./routes/appointmentRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -47,8 +50,11 @@ app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 // Montar Rutas de la Aplicación
 app.use('/api/auth', authRoutes);
+app.use('/api/business', businessRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/sales', salesRoutes);
+app.use('/api/staff', staffRoutes);
+app.use('/api/appointments', appointmentRoutes);
 app.use('/api/expenses', expensesRoutes);
 app.use('/api/customers', customersRoutes);
 app.use('/api/receivables', receivablesRoutes);

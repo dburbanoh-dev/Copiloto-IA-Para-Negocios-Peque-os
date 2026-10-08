@@ -103,11 +103,13 @@ const createProduct = async (req, res) => {
     const isServiceBool = Boolean(is_service);
     const initialStock = isServiceBool ? 0 : Number(stock || 0);
     const minStockVal = isServiceBool ? 0 : Number(min_stock || 5);
+    const duration = isServiceBool ? Number(duration_minutes || 30) : 0;
+    const commission = Number(commission_rate || 0);
 
     const result = await db.query(
       `INSERT INTO products 
-        (business_id, category_id, name, barcode, price, cost, stock, min_stock, unit_type, is_service)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        (business_id, category_id, name, barcode, price, cost, stock, min_stock, unit_type, is_service, duration_minutes, commission_rate)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
        RETURNING *`,
       [
         businessId,
@@ -119,7 +121,9 @@ const createProduct = async (req, res) => {
         initialStock,
         minStockVal,
         unit_type || 'unidad',
-        isServiceBool
+        isServiceBool,
+        duration,
+        commission
       ]
     );
 
@@ -195,9 +199,11 @@ const updateProduct = async (req, res) => {
            min_stock = COALESCE($7, min_stock),
            unit_type = COALESCE($8, unit_type),
            is_service = $9,
-           is_active = COALESCE($10, is_active),
+           duration_minutes = COALESCE($10, duration_minutes),
+           commission_rate = COALESCE($11, commission_rate),
+           is_active = COALESCE($12, is_active),
            updated_at = NOW()
-       WHERE id = $11 AND business_id = $12
+       WHERE id = $13 AND business_id = $14
        RETURNING *`,
       [
         name ? name.trim() : null,
@@ -209,6 +215,8 @@ const updateProduct = async (req, res) => {
         min_stock !== undefined ? Number(min_stock) : null,
         unit_type || null,
         isServiceBool,
+        duration_minutes !== undefined ? Number(duration_minutes) : null,
+        commission_rate !== undefined ? Number(commission_rate) : null,
         is_active !== undefined ? Boolean(is_active) : null,
         id,
         businessId

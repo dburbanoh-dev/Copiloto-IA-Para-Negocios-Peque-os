@@ -1,6 +1,6 @@
 -- =====================================================
 -- NEGOCIOAI — Schema Principal PostgreSQL
--- Versión: 2.0 (Refactored - Single Source of Truth)
+-- Versión: 3.0 (Arquitectura Modular Multi-Tenant SaaS)
 -- =====================================================
 
 -- Habilitar extensión para UUIDs en PostgreSQL
@@ -21,21 +21,27 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS business_types (
     id VARCHAR(50) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    description TEXT
+    description TEXT,
+    default_modules TEXT[] DEFAULT ARRAY['pos', 'inventory', 'expenses', 'reports']::TEXT[]
 );
 
--- Insertar tipos de negocio iniciales
-INSERT INTO business_types (id, name, description) VALUES
-('tienda', 'Tienda de Barrio / Minimercado', 'Venta de abarrotes, víveres y productos de consumo diario'),
-('bar', 'Bar / Discoteca / Licorera', 'Venta de bebidas alcohólicas y refrescos'),
-('papeleria', 'Papelería / Variedades', 'Artículos escolares, útiles de oficina e impresiones'),
-('barberia', 'Barbería / Peluquería', 'Servicios de estética, cortes de cabello y cuidado personal'),
-('restaurante', 'Restaurante Pequeño / Comida Rápida', 'Venta de alimentos preparados y bebidas'),
-('emprendimiento', 'Emprendimiento / Tienda Online', 'Venta de productos artesanales o catálogo general'),
-('otro', 'Otro Pequeño Comercio', 'Otros tipos de comercios locales')
-ON CONFLICT (id) DO NOTHING;
+ALTER TABLE business_types ADD COLUMN IF NOT EXISTS default_modules TEXT[] DEFAULT ARRAY['pos', 'inventory', 'expenses', 'reports']::TEXT[];
 
--- 3. TABLA DE NEGOCIOS
+-- Insertar / actualizar tipos de negocio con sus módulos iniciales recomendados
+INSERT INTO business_types (id, name, description, default_modules) VALUES
+('tienda', 'Tienda de Barrio / Minimercado', 'Venta de abarrotes, víveres y productos de consumo diario', ARRAY['pos', 'inventory', 'receivables', 'expenses', 'reports']::TEXT[]),
+('barberia', 'Barbería / Peluquería', 'Servicios de estética, cortes de cabello, agenda y comisiones', ARRAY['services', 'appointments', 'staff', 'pos', 'expenses', 'reports']::TEXT[]),
+('papeleria', 'Papelería / Variedades', 'Artículos escolares, útiles de oficina, copias e impresiones', ARRAY['pos', 'inventory', 'services', 'expenses', 'reports']::TEXT[]),
+('bar', 'Bar / Discoteca / Licorera', 'Venta de bebidas alcohólicas, refrescos y control de cuentas', ARRAY['pos', 'inventory', 'tables', 'expenses', 'reports']::TEXT[]),
+('restaurante', 'Restaurante Pequeño / Comida Rápida', 'Venta de alimentos preparados, comandas y cocina', ARRAY['pos', 'tables', 'kitchen', 'expenses', 'reports']::TEXT[]),
+('emprendimiento', 'Emprendimiento / Tienda Online', 'Venta de productos artesanales o catálogo general', ARRAY['pos', 'inventory', 'receivables', 'expenses', 'reports']::TEXT[]),
+('otro', 'Otro Pequeño Comercio', 'Otros tipos de comercios locales', ARRAY['pos', 'inventory', 'expenses', 'reports']::TEXT[])
+ON CONFLICT (id) DO UPDATE SET 
+    name = EXCLUDED.name,
+    description = EXCLUDED.description,
+    default_modules = EXCLUDED.default_modules;
+
+-- 3. TABLA DE NEGOCIOS (Multi-Tenant con Configuración Modular)
 CREATE TABLE IF NOT EXISTS businesses (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -45,6 +51,8 @@ CREATE TABLE IF NOT EXISTS businesses (
     city VARCHAR(100) DEFAULT 'Medellín',
     country VARCHAR(100) DEFAULT 'Colombia',
     currency VARCHAR(10) DEFAULT 'COP',
+    enabled_modules TEXT[] DEFAULT ARRAY['pos', 'inventory', 'expenses', 'reports']::TEXT[],
+    settings JSONB DEFAULT '{}'::JSONB,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -57,7 +65,7 @@ CREATE TABLE IF NOT EXISTS categories (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 5. TABLA DE PRODUCTOS Y SERVICIOS
+-- 5. TABLA DE PRODUCTOS Y SERVICIOS (Configurable para Físicos vs Servicios)
 CREATE TABLE IF NOT EXISTS products (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
@@ -70,6 +78,8 @@ CREATE TABLE IF NOT EXISTS products (
     min_stock NUMERIC(10, 2) DEFAULT 5,
     unit_type VARCHAR(20) DEFAULT 'unidad',
     is_service BOOLEAN DEFAULT FALSE,
+    duration_minutes INTEGER DEFAULT 30,
+    commission_rate NUMERIC(5, 2) DEFAULT 0.00,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -85,7 +95,36 @@ CREATE TABLE IF NOT EXISTS customers (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 7. TABLA DE VENTAS
+-- 7. TABLA DE EMPLEADOS / ESPECIALISTAS / BARBEROS (Módulo Nivel 2)
+CREATE TABLE IF NOT EXISTS staff (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
+    name VARCHAR(150) NOT NULL,
+    role VARCHAR(50) DEFAULT 'barbero',
+    phone VARCHAR(20),
+    commission_pct NUMERIC(5, 2) DEFAULT 40.00 CHECK (commission_pct >= 0 AND commission_pct <= 100),
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 8. TABLA DE CITAS Y AGENDA (Módulo Nivel 2 - Barbería / Spa)
+CREATE TABLE IF NOT EXISTS appointments (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
+    customer_id UUID REFERENCES customers(id) ON DELETE SET NULL,
+    customer_name VARCHAR(150) NOT NULL,
+    customer_phone VARCHAR(20),
+    staff_id UUID REFERENCES staff(id) ON DELETE SET NULL,
+    service_id UUID REFERENCES products(id) ON DELETE SET NULL,
+    scheduled_at TIMESTAMPTZ NOT NULL,
+    status VARCHAR(20) DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'in_progress', 'completed', 'cancelled')),
+    total_price NUMERIC(12, 2) NOT NULL DEFAULT 0,
+    commission_amount NUMERIC(12, 2) DEFAULT 0,
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 9. TABLA DE VENTAS
 CREATE TABLE IF NOT EXISTS sales (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
@@ -97,18 +136,18 @@ CREATE TABLE IF NOT EXISTS sales (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 8. DETALLE DE VENTAS
+-- 10. DETALLE DE VENTAS
 CREATE TABLE IF NOT EXISTS sale_items (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     sale_id UUID NOT NULL REFERENCES sales(id) ON DELETE CASCADE,
     product_id UUID NOT NULL REFERENCES products(id),
+    staff_id UUID REFERENCES staff(id) ON DELETE SET NULL,
     quantity NUMERIC(10, 2) NOT NULL CHECK (quantity > 0),
     unit_price NUMERIC(12, 2) NOT NULL CHECK (unit_price >= 0),
     subtotal NUMERIC(12, 2) NOT NULL CHECK (subtotal >= 0)
 );
 
--- 9. CUENTAS POR COBRAR (FIADOS)
--- NOTA: Incluye columna 'concept' para descripción en palabras del dueño
+-- 11. CUENTAS POR COBRAR (FIADOS)
 CREATE TABLE IF NOT EXISTS receivables (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
@@ -123,7 +162,7 @@ CREATE TABLE IF NOT EXISTS receivables (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 10. GASTOS OPERATIVOS
+-- 12. GASTOS OPERATIVOS
 CREATE TABLE IF NOT EXISTS expenses (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
@@ -135,7 +174,7 @@ CREATE TABLE IF NOT EXISTS expenses (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 11. MOVIMIENTOS DE INVENTARIO (KARDEX)
+-- 13. MOVIMIENTOS DE INVENTARIO (KARDEX)
 CREATE TABLE IF NOT EXISTS inventory_movements (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
@@ -154,6 +193,8 @@ CREATE TABLE IF NOT EXISTS inventory_movements (
 CREATE INDEX IF NOT EXISTS idx_businesses_user ON businesses(user_id);
 CREATE INDEX IF NOT EXISTS idx_products_business ON products(business_id);
 CREATE INDEX IF NOT EXISTS idx_products_business_active ON products(business_id) WHERE is_active = TRUE;
+CREATE INDEX IF NOT EXISTS idx_staff_business ON staff(business_id);
+CREATE INDEX IF NOT EXISTS idx_appointments_business ON appointments(business_id, scheduled_at);
 CREATE INDEX IF NOT EXISTS idx_sales_business ON sales(business_id);
 CREATE INDEX IF NOT EXISTS idx_sales_business_date ON sales(business_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_sale_items_sale ON sale_items(sale_id);
@@ -165,22 +206,46 @@ CREATE INDEX IF NOT EXISTS idx_customers_business ON customers(business_id);
 CREATE INDEX IF NOT EXISTS idx_inventory_movements_product ON inventory_movements(product_id);
 
 -- =====================================================
--- MIGRACIÓN: Agregar columna 'concept' si la tabla ya existe sin ella
--- (Seguro para ejecutar múltiples veces)
+-- MIGRACIÓN DINÁMICA AUTOMÁTICA
+-- (Seguro para ejecutar múltiples veces sin perder datos)
 -- =====================================================
 DO $$
 BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'receivables' AND column_name = 'concept'
-    ) THEN
+    -- Módulo de negocios: enabled_modules y settings
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'businesses' AND column_name = 'enabled_modules') THEN
+        ALTER TABLE businesses ADD COLUMN enabled_modules TEXT[] DEFAULT ARRAY['pos', 'inventory', 'expenses', 'reports']::TEXT[];
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'businesses' AND column_name = 'settings') THEN
+        ALTER TABLE businesses ADD COLUMN settings JSONB DEFAULT '{}'::JSONB;
+    END IF;
+
+    -- Actualizar módulos predeterminados según el business_type_id para negocios existentes
+    UPDATE businesses b
+    SET enabled_modules = bt.default_modules
+    FROM business_types bt
+    WHERE b.business_type_id = bt.id AND (b.enabled_modules IS NULL OR b.enabled_modules = '{}');
+
+    -- Columnas de servicios en products
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'duration_minutes') THEN
+        ALTER TABLE products ADD COLUMN duration_minutes INTEGER DEFAULT 30;
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'products' AND column_name = 'commission_rate') THEN
+        ALTER TABLE products ADD COLUMN commission_rate NUMERIC(5, 2) DEFAULT 0.00;
+    END IF;
+
+    -- Columna staff_id en sale_items
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'sale_items' AND column_name = 'staff_id') THEN
+        ALTER TABLE sale_items ADD COLUMN staff_id UUID REFERENCES staff(id) ON DELETE SET NULL;
+    END IF;
+
+    -- Columnas en receivables
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'receivables' AND column_name = 'concept') THEN
         ALTER TABLE receivables ADD COLUMN concept TEXT DEFAULT 'Fiado registrado en tienda';
     END IF;
     
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'receivables' AND column_name = 'notes'
-    ) THEN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'receivables' AND column_name = 'notes') THEN
         ALTER TABLE receivables ADD COLUMN notes TEXT;
     END IF;
 END $$;

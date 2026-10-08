@@ -27,6 +27,10 @@ export const AuthProvider = ({ children }) => {
       }
     };
     checkAuth();
+
+    const handleAuthExpired = () => logout();
+    window.addEventListener('auth:expired', handleAuthExpired);
+    return () => window.removeEventListener('auth:expired', handleAuthExpired);
   }, [token]);
 
   const login = async (email, password) => {
@@ -53,6 +57,10 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
+  const updateBusiness = (updatedBiz) => {
+    setBusiness(prev => ({ ...prev, ...updatedBiz }));
+  };
+
   const logout = () => {
     localStorage.removeItem('negocioai_token');
     setToken(null);
@@ -61,7 +69,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, business, token, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, business, token, loading, login, register, updateBusiness, logout }}>
       {children}
     </AuthContext.Provider>
   );

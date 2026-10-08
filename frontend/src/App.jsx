@@ -7,6 +7,9 @@ import { CopilotChat } from './components/CopilotChat';
 import { SalesView } from './components/SalesView';
 import { ProductsView } from './components/ProductsView';
 import { ReceivablesView } from './components/ReceivablesView';
+import { AppointmentsView } from './components/AppointmentsView';
+import { StaffView } from './components/StaffView';
+import { BusinessSettingsView } from './components/BusinessSettingsView';
 
 const MainApp = () => {
   const { user, loading } = useContext(AuthContext);
@@ -30,9 +33,12 @@ const MainApp = () => {
           <>
             {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
             {activeTab === 'copilot' && <CopilotChat />}
+            {activeTab === 'appointments' && <AppointmentsView />}
             {activeTab === 'sales' && <SalesView />}
             {activeTab === 'products' && <ProductsView />}
+            {activeTab === 'staff' && <StaffView />}
             {activeTab === 'receivables' && <ReceivablesView />}
+            {activeTab === 'settings' && <BusinessSettingsView />}
           </>
         )}
       </main>
