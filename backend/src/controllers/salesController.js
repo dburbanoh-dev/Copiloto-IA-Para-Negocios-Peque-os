@@ -14,6 +14,17 @@ const createSale = async (req, res) => {
   try {
     await client.query('BEGIN');
 
+    // 🔒 Verificación Multi-Tenant: Si se asigna cliente, verificar que pertenece a este negocio
+    if (customer_id) {
+      const custCheck = await client.query(
+        'SELECT id FROM customers WHERE id = $1 AND business_id = $2',
+        [customer_id, businessId]
+      );
+      if (custCheck.rows.length === 0) {
+        throw new Error('Aislamiento de seguridad: El cliente seleccionado no pertenece a tu negocio.');
+      }
+    }
+
     let calculatedTotal = 0;
     const validatedItems = [];
 

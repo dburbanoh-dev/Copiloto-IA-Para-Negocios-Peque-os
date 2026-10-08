@@ -45,16 +45,16 @@ const getCustomerById = async (req, res) => {
       return res.status(404).json({ error: 'Cliente no encontrado.' });
     }
 
-    // Obtener deudas activas o pendientes
+    // Obtener deudas activas o pendientes filtrando estrictamente por este negocio
     const debtsRes = await db.query(
-      `SELECT * FROM receivables WHERE customer_id = $1 AND status != 'cancelled' ORDER BY created_at DESC`,
-      [id]
+      `SELECT * FROM receivables WHERE customer_id = $1 AND business_id = $2 AND status != 'cancelled' ORDER BY created_at DESC`,
+      [id, businessId]
     );
 
-    // Obtener últimas 10 ventas del cliente
+    // Obtener últimas 10 ventas del cliente filtrando estrictamente por este negocio
     const salesRes = await db.query(
-      `SELECT * FROM sales WHERE customer_id = $1 ORDER BY created_at DESC LIMIT 10`,
-      [id]
+      `SELECT * FROM sales WHERE customer_id = $1 AND business_id = $2 ORDER BY created_at DESC LIMIT 10`,
+      [id, businessId]
     );
 
     res.json({

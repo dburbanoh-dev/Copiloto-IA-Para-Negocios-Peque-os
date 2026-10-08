@@ -15,6 +15,14 @@
       "password_hash": "$2b$10$.TGSueuiRduqd6bLPHKN/upfnKoG4E1mGlRcA79JaqBv3JbVHM3vm",
       "phone": null,
       "created_at": "2026-10-05T20:14:50.420Z"
+    },
+    {
+      "id": "f6e27b15-5c17-44d3-81cd-8760e7fd4fa8",
+      "full_name": "Jhon Gaviria",
+      "email": "tatto10@gmail.com",
+      "password_hash": "$2b$10$Dxq0nb.HflhvJ4kAj9XBouT7D5rkmbzybl2CtsekCrvHBlQTFrf1u",
+      "phone": null,
+      "created_at": "2026-10-07T21:24:03.450Z"
     }
   ],
   "business_types": [
@@ -72,6 +80,15 @@
       "city": "El Tambo",
       "currency": "COP",
       "created_at": "2026-10-05T20:14:50.420Z"
+    },
+    {
+      "id": "9dd79bfd-2536-4050-95fb-a55246e68601",
+      "user_id": "f6e27b15-5c17-44d3-81cd-8760e7fd4fa8",
+      "business_type_id": "barberia",
+      "name": "Luxury VIP",
+      "city": "El Tambo, Nariño",
+      "currency": "COP",
+      "created_at": "2026-10-07T21:24:03.451Z"
     }
   ],
   "categories": [],
@@ -252,12 +269,117 @@
       "barcode": null,
       "price": 80,
       "cost": 70,
-      "stock": 10,
+      "stock": 8,
       "min_stock": 2,
       "unit_type": "unidad",
       "is_service": false,
       "is_active": true,
       "created_at": "2026-10-05T20:26:24.367Z"
+    },
+    {
+      "id": "00dec2f9-4c9d-4676-ac18-e53630de94a6",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "category_id": null,
+      "name": "Cerveza tecate",
+      "barcode": null,
+      "price": 3,
+      "cost": 1.5,
+      "stock": 100,
+      "min_stock": 20,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-07T20:52:47.118Z"
+    },
+    {
+      "id": "00bf4195-5b3c-42ea-a925-a4d2fc4d4d40",
+      "business_id": "9dd79bfd-2536-4050-95fb-a55246e68601",
+      "category_id": "Aguardiente Nariño",
+      "name": 45000,
+      "barcode": 32000,
+      "price": 25,
+      "cost": 5,
+      "stock": 0,
+      "min_stock": 5,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-07T21:24:03.451Z"
+    },
+    {
+      "id": "ba7ecf2b-ba99-4783-9c29-b210d24bbd1c",
+      "business_id": "9dd79bfd-2536-4050-95fb-a55246e68601",
+      "category_id": "Aguardiente Amarillo",
+      "name": 55000,
+      "barcode": 40000,
+      "price": 20,
+      "cost": 5,
+      "stock": 0,
+      "min_stock": 5,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-07T21:24:03.452Z"
+    },
+    {
+      "id": "83abd8d2-3564-4533-ab9a-fdc6bb265c2c",
+      "business_id": "9dd79bfd-2536-4050-95fb-a55246e68601",
+      "category_id": "Whisky Buchanan's",
+      "name": 140000,
+      "barcode": 105000,
+      "price": 15,
+      "cost": 3,
+      "stock": 0,
+      "min_stock": 5,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-07T21:24:03.452Z"
+    },
+    {
+      "id": "5f6ab79f-3b73-47b0-9b76-a9b8e310600f",
+      "business_id": "9dd79bfd-2536-4050-95fb-a55246e68601",
+      "category_id": "Cerveza Poker",
+      "name": 4500,
+      "barcode": 3000,
+      "price": 60,
+      "cost": 10,
+      "stock": 0,
+      "min_stock": 5,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-07T21:24:03.453Z"
+    },
+    {
+      "id": "f1a26fe5-b189-4f4f-af8f-fd10196d4628",
+      "business_id": "9dd79bfd-2536-4050-95fb-a55246e68601",
+      "category_id": "Cerveza Águila Light",
+      "name": 4500,
+      "barcode": 3000,
+      "price": 50,
+      "cost": 10,
+      "stock": 0,
+      "min_stock": 5,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-07T21:24:03.465Z"
+    },
+    {
+      "id": "ed4ef0f6-c62f-4348-acf9-a5976ee948d6",
+      "business_id": "9dd79bfd-2536-4050-95fb-a55246e68601",
+      "category_id": "Cerveza Coronita",
+      "name": 6000,
+      "barcode": 4200,
+      "price": 40,
+      "cost": 8,
+      "stock": 0,
+      "min_stock": 5,
+      "unit_type": "unidad",
+      "is_service": false,
+      "is_active": true,
+      "created_at": "2026-10-07T21:24:03.466Z"
     }
   ],
   "customers": [
@@ -276,6 +398,14 @@
       "phone": "3233445867",
       "notes": "llevo 2 six pac corono",
       "created_at": "2026-10-05T21:47:40.158Z"
+    },
+    {
+      "id": "e7158802-a358-46c0-ad8a-58e3a6ff85b0",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "name": "¿Quién",
+      "phone": null,
+      "notes": null,
+      "created_at": "2026-10-07T20:49:36.861Z"
     }
   ],
   "sales": [
@@ -328,6 +458,16 @@
       "status": "completed",
       "notes": null,
       "created_at": "2026-10-05T21:52:00.015Z"
+    },
+    {
+      "id": "684a157d-ac93-477a-b92f-ed01a92f905c",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "customer_id": null,
+      "total_amount": 160,
+      "payment_method": "transfer",
+      "status": "completed",
+      "notes": null,
+      "created_at": "2026-10-07T20:50:45.232Z"
     }
   ],
   "sale_items": [
@@ -370,6 +510,14 @@
       "quantity": 18,
       "unit_price": 4185,
       "subtotal": 75330
+    },
+    {
+      "id": "d0bf7a08-20ac-4380-9d5d-933d8c19be94",
+      "sale_id": "684a157d-ac93-477a-b92f-ed01a92f905c",
+      "product_id": "b6df6c08-5af7-4f11-823d-446fa4cdd1a0",
+      "quantity": 2,
+      "unit_price": 80,
+      "subtotal": 160
     }
   ],
   "expenses": [],
@@ -385,6 +533,18 @@
       "concept": "llevo 2 six pac corono",
       "notes": "me paga en la semana",
       "created_at": "2026-10-05T21:47:40.158Z"
+    },
+    {
+      "id": "f17e21d4-0176-491b-b62a-34f91c5339a3",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "customer_id": "e7158802-a358-46c0-ad8a-58e3a6ff85b0",
+      "total_amount": 0,
+      "paid_amount": 0,
+      "status": "pending",
+      "due_date": null,
+      "concept": "Fiado registrado en tienda",
+      "notes": null,
+      "created_at": "2026-10-07T20:49:36.861Z"
     }
   ],
   "inventory_movements": [
@@ -437,6 +597,23 @@
       "previous_stock": 18,
       "new_stock": "Venta #847ee30d",
       "created_at": "2026-10-05T21:52:00.017Z"
+    },
+    {
+      "id": "15e8b9fa-1e3c-4527-a487-c9df8b3d2072",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "product_id": "b6df6c08-5af7-4f11-823d-446fa4cdd1a0",
+      "type": -2,
+      "quantity": 10,
+      "previous_stock": 8,
+      "new_stock": "Venta #684a157d",
+      "created_at": "2026-10-07T20:50:45.233Z"
+    },
+    {
+      "id": "5c0fe0fb-2cf8-4680-be14-04c6171c3a28",
+      "business_id": "fe6edf83-6d5a-4e62-97b9-37869a4a1ea7",
+      "product_id": "00dec2f9-4c9d-4676-ac18-e53630de94a6",
+      "type": 100,
+      "created_at": "2026-10-07T20:52:47.119Z"
     }
   ]
 }

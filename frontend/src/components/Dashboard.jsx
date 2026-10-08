@@ -24,16 +24,23 @@ export const Dashboard = ({ setActiveTab }) => {
           fetchApi('/products?active_only=true')
         ]);
 
-        const todayStr = new Date().toISOString().split('T')[0];
+        const isToday = (dateStr) => {
+          if (!dateStr) return false;
+          const d = new Date(dateStr);
+          const now = new Date();
+          return d.getFullYear() === now.getFullYear() &&
+                 d.getMonth() === now.getMonth() &&
+                 d.getDate() === now.getDate();
+        };
 
-        // Ventas de hoy
+        // Ventas de hoy (en zona horaria local)
         const salesToday = salesRes
-          .filter(s => s.status !== 'cancelled' && s.created_at.startsWith(todayStr))
+          .filter(s => s.status !== 'cancelled' && isToday(s.created_at))
           .reduce((acc, s) => acc + Number(s.total_amount), 0);
 
-        // Gastos de hoy
+        // Gastos de hoy (en zona horaria local)
         const expensesToday = expensesRes
-          .filter(e => e.date && e.date.startsWith(todayStr))
+          .filter(e => isToday(e.date || e.created_at))
           .reduce((acc, e) => acc + Number(e.amount), 0);
 
         // Deudas por cobrar

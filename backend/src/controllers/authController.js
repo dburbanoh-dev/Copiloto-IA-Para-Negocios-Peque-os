@@ -64,7 +64,7 @@ const register = async (req, res) => {
     // 7. Generar JWT Token
     const token = jwt.sign(
       { userId: newUser.id, email: newUser.email, businessId: newBusiness.id },
-      process.env.JWT_SECRET || 'desarrollo_secreto',
+      process.env.JWT_SECRET || 'desarrollo_secreto_negocioai_2026_jwt_token_key',
       { expiresIn: '30d' }
     );
 
@@ -123,7 +123,7 @@ const login = async (req, res) => {
     // 4. Generar Token JWT
     const token = jwt.sign(
       { userId: user.id, email: user.email, businessId: business ? business.id : null },
-      process.env.JWT_SECRET || 'desarrollo_secreto',
+      process.env.JWT_SECRET || 'desarrollo_secreto_negocioai_2026_jwt_token_key',
       { expiresIn: '30d' }
     );
 

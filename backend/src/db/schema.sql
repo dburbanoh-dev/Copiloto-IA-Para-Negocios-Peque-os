@@ -1,3 +1,8 @@
+-- =====================================================
+-- NEGOCIOAI — Schema Principal PostgreSQL
+-- Versión: 2.0 (Refactored - Single Source of Truth)
+-- =====================================================
+
 -- Habilitar extensión para UUIDs en PostgreSQL
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -21,7 +26,7 @@ CREATE TABLE IF NOT EXISTS business_types (
 
 -- Insertar tipos de negocio iniciales
 INSERT INTO business_types (id, name, description) VALUES
-('tienda', 'Tienda de Barrio / Minimercado', 'Venta de abarrotes, viveres y productos de consumo diario'),
+('tienda', 'Tienda de Barrio / Minimercado', 'Venta de abarrotes, víveres y productos de consumo diario'),
 ('bar', 'Bar / Discoteca / Licorera', 'Venta de bebidas alcohólicas y refrescos'),
 ('papeleria', 'Papelería / Variedades', 'Artículos escolares, útiles de oficina e impresiones'),
 ('barberia', 'Barbería / Peluquería', 'Servicios de estética, cortes de cabello y cuidado personal'),
@@ -103,6 +108,7 @@ CREATE TABLE IF NOT EXISTS sale_items (
 );
 
 -- 9. CUENTAS POR COBRAR (FIADOS)
+-- NOTA: Incluye columna 'concept' para descripción en palabras del dueño
 CREATE TABLE IF NOT EXISTS receivables (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     business_id UUID NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
@@ -111,6 +117,8 @@ CREATE TABLE IF NOT EXISTS receivables (
     total_amount NUMERIC(12, 2) NOT NULL CHECK (total_amount >= 0),
     paid_amount NUMERIC(12, 2) DEFAULT 0.00 CHECK (paid_amount >= 0),
     status VARCHAR(20) DEFAULT 'pending',
+    concept TEXT DEFAULT 'Fiado registrado en tienda',
+    notes TEXT,
     due_date DATE,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -140,8 +148,39 @@ CREATE TABLE IF NOT EXISTS inventory_movements (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- ÍNDICES PARA BÚSQUEDAS RÁPIDAS
+-- =====================================================
+-- ÍNDICES PARA RENDIMIENTO EN CONSULTAS MULTI-TENANT
+-- =====================================================
+CREATE INDEX IF NOT EXISTS idx_businesses_user ON businesses(user_id);
 CREATE INDEX IF NOT EXISTS idx_products_business ON products(business_id);
+CREATE INDEX IF NOT EXISTS idx_products_business_active ON products(business_id) WHERE is_active = TRUE;
 CREATE INDEX IF NOT EXISTS idx_sales_business ON sales(business_id);
+CREATE INDEX IF NOT EXISTS idx_sales_business_date ON sales(business_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_sale_items_sale ON sale_items(sale_id);
 CREATE INDEX IF NOT EXISTS idx_expenses_business ON expenses(business_id);
+CREATE INDEX IF NOT EXISTS idx_expenses_business_date ON expenses(business_id, date DESC);
 CREATE INDEX IF NOT EXISTS idx_receivables_business ON receivables(business_id);
+CREATE INDEX IF NOT EXISTS idx_receivables_customer ON receivables(customer_id);
+CREATE INDEX IF NOT EXISTS idx_customers_business ON customers(business_id);
+CREATE INDEX IF NOT EXISTS idx_inventory_movements_product ON inventory_movements(product_id);
+
+-- =====================================================
+-- MIGRACIÓN: Agregar columna 'concept' si la tabla ya existe sin ella
+-- (Seguro para ejecutar múltiples veces)
+-- =====================================================
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'receivables' AND column_name = 'concept'
+    ) THEN
+        ALTER TABLE receivables ADD COLUMN concept TEXT DEFAULT 'Fiado registrado en tienda';
+    END IF;
+    
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'receivables' AND column_name = 'notes'
+    ) THEN
+        ALTER TABLE receivables ADD COLUMN notes TEXT;
+    END IF;
+END $$;

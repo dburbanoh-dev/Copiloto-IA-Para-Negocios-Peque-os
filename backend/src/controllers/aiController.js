@@ -34,6 +34,7 @@ const executeAction = async (req, res) => {
       case 'query_sales_today': {
         const result = await db.query(
           `SELECT COALESCE(SUM(total_amount), 0) as total, COUNT(*) as count 
+           FROM sales
            WHERE business_id = $1 AND DATE(created_at) = CURRENT_DATE AND status != 'cancelled'`,
           [businessId]
         );

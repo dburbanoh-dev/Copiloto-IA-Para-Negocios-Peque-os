@@ -89,6 +89,17 @@ const createProduct = async (req, res) => {
   }
 
   try {
+    // 🔒 Verificación Multi-Tenant: Si se asigna categoría, verificar que pertenece a este negocio
+    if (category_id) {
+      const catCheck = await db.query(
+        'SELECT id FROM categories WHERE id = $1 AND business_id = $2',
+        [category_id, businessId]
+      );
+      if (catCheck.rows.length === 0) {
+        return res.status(400).json({ error: 'Aislamiento de seguridad: La categoría no pertenece a tu negocio.' });
+      }
+    }
+
     const isServiceBool = Boolean(is_service);
     const initialStock = isServiceBool ? 0 : Number(stock || 0);
     const minStockVal = isServiceBool ? 0 : Number(min_stock || 5);
@@ -159,6 +170,17 @@ const updateProduct = async (req, res) => {
     }
 
     const current = existing.rows[0];
+
+    // 🔒 Verificación Multi-Tenant: Si se actualiza categoría, verificar que pertenece a este negocio
+    if (category_id) {
+      const catCheck = await db.query(
+        'SELECT id FROM categories WHERE id = $1 AND business_id = $2',
+        [category_id, businessId]
+      );
+      if (catCheck.rows.length === 0) {
+        return res.status(400).json({ error: 'Aislamiento de seguridad: La categoría no pertenece a tu negocio.' });
+      }
+    }
     const isServiceBool = is_service !== undefined ? Boolean(is_service) : current.is_service;
     const newStock = isServiceBool ? 0 : (stock !== undefined ? Number(stock) : current.stock);
 
